@@ -39,10 +39,7 @@ const OnBoarding3 = () => {
                             }
                             <View style={styles.circleButton}>
                                 <TouchableOpacity onPress={handleButtonClick}>
-
-
                                     <Icon name="arrowright" size={24} color="#FE8C00" />
-
                                 </TouchableOpacity>
                             </View>
                         </View>
