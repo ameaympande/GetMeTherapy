@@ -20,11 +20,12 @@ const CustomTextInput = ({ placeholder, value, onChangeText, keyboardType, autoC
                 keyboardType={keyboardType}
                 autoCapitalize={autoCapitalize}
             />
-            {placeholder === "Password" && (
+            {placeholder === "Password" || placeholder === "New Password" || placeholder === "Confirm Password" ? (
                 <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIconContainer}>
                     <Icon name={isPasswordVisible ? "eye" : "eye-with-line"} size={20} color="black" />
                 </TouchableOpacity>
-            )}
+            ) : null}
+
         </View>
     );
 };

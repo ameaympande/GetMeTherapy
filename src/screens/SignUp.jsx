@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import CustomTextInput from '../components/TextInput';
 import PrimaryButton from '../components/Button';
@@ -57,97 +57,98 @@ const SignUp = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.maincontainer}>
-                <View style={styles.titlecontainer}>
-                    <Text style={styles.titleText}>
-                        Create your new account.
-                    </Text>
-                    <Text style={styles.signinText}>
-                        Please sign in to your account
-                    </Text>
-                </View>
-                <View style={styles.formcontainer}>
-                    <Text style={styles.labelText}>
-                        Email Address
-                    </Text>
-                    <CustomTextInput
-                        placeholder="Enter Email"
-                        value={form.email}
-                        onChangeText={handleEmailChange}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        isError={!!emailError}
-                    />
-                    {emailError ? <Text style={styles.helperText}>{emailError}</Text> : null}
-
-
-                    <Text style={[styles.labelText, { marginTop: 10 }]}>
-                        User Name
-                    </Text>
-                    <CustomTextInput
-                        placeholder="Enter Username"
-                        value={form.email}
-                        onChangeText={handleEmailChange}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        isError={!!emailError}
-                    />
-                    {emailError ? <Text style={styles.helperText}>{emailError}</Text> : null}
-
-                    <Text style={[styles.labelText, { marginTop: 10 }]}>
-                        Password
-                    </Text>
-                    <CustomTextInput
-                        placeholder="Password"
-                        value={form.password}
-                        onChangeText={handlePasswordChange}
-                        keyboardType="default"
-                        autoCapitalize="none"
-                        isError={!!passwordError}
-                    />
-                    {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
-                    <View style={styles.checkboxContainer}>
-                        <CheckBox
-                            style={styles.checkbox}
-                            onClick={() => setForm({ ...form, isSelected: !form.isSelected })}
-                            isChecked={form.isSelected}
-
-                        />
-                        <Text style={styles.label}>I Agree with{' '}
-                            <Text style={{ ...styles.forgotText, marginLeft: 2, letterSpacing: 1, fontWeight: "600" }}>
-                                Terms of Service
-                            </Text>
-                            {' '}and{' '}
-                            <Text style={{ ...styles.forgotText, marginLeft: 0, fontWeight: "600" }}>
-                                Privacy Policy
-                            </Text>
+            <ScrollView>
+                <View style={styles.maincontainer}>
+                    <View style={styles.titlecontainer}>
+                        <Text style={styles.titleText}>
+                            Create your new account.
                         </Text>
-
+                        <Text style={styles.signinText}>
+                            Please sign in to your account
+                        </Text>
                     </View>
-                    <PrimaryButton label="Register" />
-                </View>
-            </View>
-            <View style={styles.speratorContainer}>
-                <View style={styles.seprator} />
-                <Text style={styles.sepratorText}>
-                    Or sign in with
-                </Text>
-                <View style={styles.seprator} />
-            </View>
-            <View style={styles.circleButton}>
-                <TouchableOpacity >
-                    <Image source={google} style={{ height: 24, width: 24 }} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.registercontainer}>
-                <Text style={{ ...styles.dontHaveText, marginRight: 0 }}>
-                    have an account?
-                </Text>
-                <Text onPress={() => navigation.navigate("Login")} style={{ ...styles.forgotText, marginLeft: 8, fontWeight: "600" }}>
-                    Sign in
-                </Text>
-            </View>
+                    <View style={styles.formcontainer}>
+                        <Text style={styles.labelText}>
+                            Email Address
+                        </Text>
+                        <CustomTextInput
+                            placeholder="Enter Email"
+                            value={form.email}
+                            onChangeText={handleEmailChange}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            isError={!!emailError}
+                        />
+                        {emailError ? <Text style={styles.helperText}>{emailError}</Text> : null}
 
+
+                        <Text style={[styles.labelText, { marginTop: 10 }]}>
+                            User Name
+                        </Text>
+                        <CustomTextInput
+                            placeholder="Enter Username"
+                            value={form.email}
+                            onChangeText={handleEmailChange}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            isError={!!emailError}
+                        />
+                        {emailError ? <Text style={styles.helperText}>{emailError}</Text> : null}
+
+                        <Text style={[styles.labelText, { marginTop: 10 }]}>
+                            Password
+                        </Text>
+                        <CustomTextInput
+                            placeholder="Password"
+                            value={form.password}
+                            onChangeText={handlePasswordChange}
+                            keyboardType="default"
+                            autoCapitalize="none"
+                            isError={!!passwordError}
+                        />
+                        {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
+                        <View style={styles.checkboxContainer}>
+                            <CheckBox
+                                style={styles.checkbox}
+                                onClick={() => setForm({ ...form, isSelected: !form.isSelected })}
+                                isChecked={form.isSelected}
+
+                            />
+                            <Text style={styles.label}>I Agree with{' '}
+                                <Text style={{ ...styles.forgotText, marginLeft: 2, letterSpacing: 1, fontWeight: "600" }}>
+                                    Terms of Service
+                                </Text>
+                                {' '}and{' '}
+                                <Text style={{ ...styles.forgotText, marginLeft: 0, fontWeight: "600" }}>
+                                    Privacy Policy
+                                </Text>
+                            </Text>
+
+                        </View>
+                        <PrimaryButton label="Register" />
+                    </View>
+                </View>
+                <View style={styles.speratorContainer}>
+                    <View style={styles.seprator} />
+                    <Text style={styles.sepratorText}>
+                        Or sign in with
+                    </Text>
+                    <View style={styles.seprator} />
+                </View>
+                <View style={styles.circleButton}>
+                    <TouchableOpacity >
+                        <Image source={google} style={{ height: 24, width: 24 }} />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.registercontainer}>
+                    <Text style={{ ...styles.dontHaveText, marginRight: 0 }}>
+                        have an account?
+                    </Text>
+                    <Text onPress={() => navigation.navigate("Login")} style={{ ...styles.forgotText, marginLeft: 8, fontWeight: "600" }}>
+                        Sign in
+                    </Text>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };
@@ -179,8 +180,7 @@ const styles = StyleSheet.create({
         color: "#878787"
     },
     formcontainer: {
-        marginTop: 45,
-
+        marginTop: 35,
     },
     labelText: {
         color: "black",
