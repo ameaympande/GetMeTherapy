@@ -1,9 +1,10 @@
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, StatusBar } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomTextInput from '../components/TextInput';
 import PrimaryButton from '../components/Button';
 import google from "../assets/images/google.png"
 import { useNavigation } from '@react-navigation/native';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 const Login = () => {
     const navigation = useNavigation();
@@ -13,6 +14,28 @@ const Login = () => {
     });
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+
+    useEffect(() => {
+        GoogleSignin.configure({
+            webClientId: "81273183034-rsp1ekvpn0n25anajedbvshuv5v1o8fa.apps.googleusercontent.com"
+        })
+    }, []);
+
+    const handleGoogleSignIN = async () => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+
+            console.log("userInfo", userInfo);
+        } catch (error) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                console.log('User cancelled the login flow');
+            } else {
+                console.error('Google Sign-In error:', error);
+            }
+        }
+
+    }
 
     const handleEmailChange = (email) => {
         setForm({ ...form, email });
@@ -94,7 +117,9 @@ const Login = () => {
                         <Text onPress={() => navigation.navigate("ForgotPassword")} style={styles.forgotText}>
                             Forgot password ?
                         </Text>
-                        <PrimaryButton label="Sign in" />
+                        <View style={styles.btncontainer}>
+                            <PrimaryButton label="Sign in" onPress={handleLogin} />
+                        </View>
                     </View>
                 </View>
                 <View style={styles.speratorContainer}>
@@ -105,7 +130,7 @@ const Login = () => {
                     <View style={styles.seprator} />
                 </View>
                 <View style={styles.circleButton}>
-                    <TouchableOpacity >
+                    <TouchableOpacity onPress={handleGoogleSignIN}>
                         <Image source={google} style={{ height: 24, width: 24 }} />
                     </TouchableOpacity>
                 </View>
@@ -229,5 +254,10 @@ const styles = StyleSheet.create({
         fontFamily: "Inter-Medium",
         fontSize: 14
     },
+    btncontainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "5%"
+    }
 
 });

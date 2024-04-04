@@ -125,7 +125,9 @@ const SignUp = () => {
                             </Text>
 
                         </View>
-                        <PrimaryButton label="Register" />
+                        <View style={styles.btncontainer}>
+                            <PrimaryButton label="Register" />
+                        </View>
                     </View>
                 </View>
                 <View style={styles.speratorContainer}>
@@ -276,6 +278,9 @@ const styles = StyleSheet.create({
         fontFamily: "Inter-Medium",
         fontSize: 14
     },
-
-
+    btncontainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "3%"
+    }
 });

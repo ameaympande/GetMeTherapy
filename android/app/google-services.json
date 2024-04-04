@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "81273183034",
+    "firebase_url": "https://getmetherapy-419318-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "getmetherapy-419318",
+    "storage_bucket": "getmetherapy-419318.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:81273183034:android:d1fee9f4f3769170fdce03",
+        "android_client_info": {
+          "package_name": "com.getmetherapy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "81273183034-agplhs7hebtpbp1sh60tp91esn5egetl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.getmetherapy",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "81273183034-rsp1ekvpn0n25anajedbvshuv5v1o8fa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCR0CigUhEntyJ7a6LoIWxXP0gbaMBvtVI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "81273183034-i8o587reqc03skm2plc5qn7nchhp80d6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -41,7 +41,7 @@ const ResetPassword = () => {
             return;
         }
 
-        navigation.navigate("Login");
+        navigation.navigate("Home");
     };
 
     return (
