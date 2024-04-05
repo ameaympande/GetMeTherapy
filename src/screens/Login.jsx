@@ -5,6 +5,9 @@ import PrimaryButton from '../components/Button';
 import google from "../assets/images/google.png"
 import { useNavigation } from '@react-navigation/native';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { createEvent } from '../helper/createGoogleEvent';
+import { createCalendarEventAPI } from '../helper/calenderEventAPI';
+// import auth from '@react-native-firebase/auth';
 
 const Login = () => {
     const navigation = useNavigation();
@@ -14,19 +17,22 @@ const Login = () => {
     });
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [userAuth, setUserAuth] = useState(null);
 
     useEffect(() => {
         GoogleSignin.configure({
-            webClientId: "81273183034-rsp1ekvpn0n25anajedbvshuv5v1o8fa.apps.googleusercontent.com"
+            webClientId: "81273183034-rcm452vj26quld59v7b23g0naa50kv9a.apps.googleusercontent.com",
+            scopes: ['https://www.googleapis.com/auth/calendar.events'],
         })
+
     }, []);
 
-    const handleGoogleSignIN = async () => {
+    const handleGoogleSignIn = async () => {
         try {
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
-
-            console.log("userInfo", userInfo);
+            console.log(userInfo);
+            setUserAuth(userInfo);
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log('User cancelled the login flow');
@@ -34,7 +40,6 @@ const Login = () => {
                 console.error('Google Sign-In error:', error);
             }
         }
-
     }
 
     const handleEmailChange = (email) => {
@@ -47,7 +52,7 @@ const Login = () => {
         setPasswordError("");
     };
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         let hasError = false;
 
         if (!validateEmail(form.email)) {
@@ -68,6 +73,13 @@ const Login = () => {
             return;
         }
 
+        try {
+            const res = await auth().signInWithEmailAndPassword(form.email, form.password);
+            console.log("res", res);
+            await createEvent(form.email);
+        } catch (error) {
+            console.error('Error creating event: ', error);
+        }
     };
 
     const validateEmail = (email) => {
@@ -130,7 +142,7 @@ const Login = () => {
                     <View style={styles.seprator} />
                 </View>
                 <View style={styles.circleButton}>
-                    <TouchableOpacity onPress={handleGoogleSignIN}>
+                    <TouchableOpacity onPress={handleGoogleSignIn}>
                         <Image source={google} style={{ height: 24, width: 24 }} />
                     </TouchableOpacity>
                 </View>

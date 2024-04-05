@@ -12,7 +12,7 @@ const OnBoarding3 = () => {
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-            navigation.navigate("Login")
+            navigation.replace("Login")
         }, 2000);
     };
 
