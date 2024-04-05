@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const createEvent = async (accessToken, userEmail, userName) => {
+const createEvent = async (accessToken, userEmail, userName = userEmail) => {
   try {
     const developerEmail = 'ameay35@gmail.com';
 

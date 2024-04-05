@@ -6,7 +6,7 @@ import google from "../assets/images/google.png"
 import { useNavigation } from '@react-navigation/native';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { createEvent } from '../helper/createEvent';
-
+import auth from "@react-native-firebase/auth";
 
 const Login = () => {
     const navigation = useNavigation();
@@ -78,10 +78,12 @@ const Login = () => {
 
         try {
             const res = await auth().signInWithEmailAndPassword(form.email, form.password);
-            console.log("res", res);
-            await createEvent(form.email);
+            const tokens = await GoogleSignin.getTokens();
+
+            const eventRes = await createEvent(tokens.accessToken, form.email)
+            console.log("eventRes", eventRes);
         } catch (error) {
-            console.error('Error creating event: ', error);
+            console.error('Error while login: ', error);
         }
     };
 
