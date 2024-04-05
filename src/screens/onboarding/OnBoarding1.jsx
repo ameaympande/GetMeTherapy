@@ -26,10 +26,10 @@ const OnBoarding1 = () => {
                             </View>
                         </View>
                         <View style={styles.btncontainer}>
-                            <TouchableOpacity style={styles.leftbtn} onPress={() => navigation.navigate("Login")}>
+                            <TouchableOpacity style={styles.leftbtn} onPress={() => navigation.replace("Login")}>
                                 <Text style={styles.btnText}>Skip</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.rightbtn} onPress={() => navigation.navigate("Onboarding2")}>
+                            <TouchableOpacity style={styles.rightbtn} onPress={() => navigation.replace("Onboarding2")}>
                                 <Text style={styles.btnText}>Next</Text>
                                 <Icon name="arrowright" size={20} color="white" style={{ marginLeft: 5 }} />
                             </TouchableOpacity>

@@ -3,11 +3,10 @@ import React from 'react'
 
 const PrimaryButton = ({ onPress, label }) => {
     return (
-        <View style={styles.btncontainer}>
-            <TouchableOpacity onPress={onPress}>
-                <Text style={styles.text}>{label}</Text>
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.btncontainer} onPress={onPress}>
+            <Text style={styles.text}>{label}</Text>
+        </TouchableOpacity>
+
     )
 }
 
@@ -22,7 +21,6 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         justifyContent: "center",
         alignItems: "center",
-        alignSelf: "center"
     },
     text: {
         fontSize: 14,
