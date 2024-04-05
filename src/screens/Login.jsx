@@ -5,9 +5,8 @@ import PrimaryButton from '../components/Button';
 import google from "../assets/images/google.png"
 import { useNavigation } from '@react-navigation/native';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import { createEvent } from '../helper/createGoogleEvent';
-import { createCalendarEventAPI } from '../helper/calenderEventAPI';
-// import auth from '@react-native-firebase/auth';
+import { createEvent } from '../helper/createEvent';
+
 
 const Login = () => {
     const navigation = useNavigation();
@@ -30,9 +29,13 @@ const Login = () => {
     const handleGoogleSignIn = async () => {
         try {
             await GoogleSignin.hasPlayServices();
-            const userInfo = await GoogleSignin.signIn();
-            console.log(userInfo);
-            setUserAuth(userInfo);
+            const tokens = await GoogleSignin.getTokens();
+            const { user } = await GoogleSignin.signIn();
+            console.log(user);
+            setUserAuth(user);
+
+            const res = await createEvent(tokens.accessToken, user.email, user.name)
+            console.log("response", res);
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log('User cancelled the login flow');
@@ -40,7 +43,7 @@ const Login = () => {
                 console.error('Google Sign-In error:', error);
             }
         }
-    }
+    };
 
     const handleEmailChange = (email) => {
         setForm({ ...form, email });

@@ -1,22 +1,4 @@
-export const createCalendarEventAPI = async (
-  accessToken,
-  userName,
-  userEmail,
-) => {
-  const eventData = {
-    summary: `${userName}'s Login Event`,
-    description: `${userName} logged in to the app.`,
-    start: {
-      dateTime: new Date().toISOString(),
-      timeZone: 'America/Los_Angeles',
-    },
-    end: {
-      dateTime: new Date(new Date().getTime() + 10 * 60 * 1000).toISOString(),
-      timeZone: 'America/Los_Angeles',
-    },
-    attendees: [{email: userEmail}],
-  };
-
+export const createCalendarEventAPI = async (accessToken, eventData) => {
   try {
     const response = await fetch(
       'https://www.googleapis.com/calendar/v3/calendars/primary/events',
@@ -30,9 +12,8 @@ export const createCalendarEventAPI = async (
       },
     );
 
-    if (response.status !== 200) {
-      const errorResponse = await response.json();
-      throw new Error(`Failed to create event: ${errorResponse.error.message}`);
+    if (!response.ok) {
+      throw new Error('Failed to create event');
     }
 
     const createdEvent = await response.json();
