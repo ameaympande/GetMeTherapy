@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { createEvent } from '../helper/createEvent';
 import auth from "@react-native-firebase/auth";
+import Toast from "react-native-toast-message"
 
 const Login = () => {
     const navigation = useNavigation();
@@ -31,12 +32,12 @@ const Login = () => {
             await GoogleSignin.hasPlayServices();
             const tokens = await GoogleSignin.getTokens();
             const { user } = await GoogleSignin.signIn();
-            console.log(user);
+            console.log("user", user);
             setUserAuth(user);
 
             const res = await createEvent(tokens.accessToken, user.email, user.name)
             console.log("response", res);
-            if (res.status === 'confirmed') navigation.replace('PostLogin')
+            if (res.status === 'confirmed') navigation.replace("PostLogin", { userAuth: userAuth });
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log('User cancelled the login flow');
@@ -79,12 +80,32 @@ const Login = () => {
 
         try {
             const res = await auth().signInWithEmailAndPassword(form.email, form.password);
+            console.log("res", res);
             const tokens = await GoogleSignin.getTokens();
-
+            if (res.user.uid) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Login successfully.'
+                });
+                navigation.replace("PostLogin", { userAuth: res.user });
+            }
             const eventRes = await createEvent(tokens.accessToken, form.email)
             console.log("eventRes", eventRes);
         } catch (error) {
             console.error('Error while login: ', error);
+            if (error.code === 'auth/invalid-credential') {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Please enter valid email or password',
+                });
+
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: error,
+                    text2: 'An error occurred. Please try again later.'
+                });
+            }
         }
     };
 

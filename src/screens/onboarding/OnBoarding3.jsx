@@ -37,8 +37,8 @@ const OnBoarding3 = () => {
                             {loading &&
                                 <ActivityIndicator color="white" size={120} style={styles.loading} />
                             }
-                            <View style={styles.circleButton}>
-                                <TouchableOpacity onPress={handleButtonClick}>
+                            <View >
+                                <TouchableOpacity style={styles.circleButton} onPress={handleButtonClick}>
                                     <Icon name="arrowright" size={24} color="#FE8C00" />
                                 </TouchableOpacity>
                             </View>

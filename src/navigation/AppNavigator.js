@@ -17,7 +17,10 @@ const AppNavigator = () => {
   return (
     <>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Navigator
+          screenOptions={{headerShown: false}}
+          // initialRouteName="ResetPassword"
+        >
           <Stack.Screen name="Onboarding1" component={onBoarding1} />
           <Stack.Screen name="Onboarding2" component={OnBoarding2} />
           <Stack.Screen name="Onboarding3" component={OnBoarding3} />
