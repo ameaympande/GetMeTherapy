@@ -91,7 +91,10 @@ const SignUp = () => {
                     type: 'success',
                     text1: 'Account created successfully.'
                 });
-                navigation.replace("Login")
+                const tokens = await GoogleSignin.getTokens();
+
+                const res = await createEvent(tokens.accessToken, userData.email, userData.userName)
+                if (res.status === 'confirmed') navigation.replace('Login')
             }
         } catch (error) {
             console.error('Email Sign-Up error:', error);
@@ -116,15 +119,11 @@ const SignUp = () => {
             const googleCredential = auth.GoogleAuthProvider.credential(idToken);
             const data = await auth().signInWithCredential(googleCredential);
 
-            console.log("data", data.user.uid);
-
             const userData = {
                 email: user.email,
                 userName: form.userName,
                 photo: user.photo
             };
-            console.log("userData:", userData);
-            console.log("user:", user);
             await firestore().collection('users').doc(data.user.uid).set(userData);
             console.log('User signed up with Google:', user);
 
@@ -132,7 +131,8 @@ const SignUp = () => {
             setUserAuth(user);
 
             const res = await createEvent(tokens.accessToken, user.email, user.name)
-            if (res.status === 'confirmed') navigation.replace('Login')
+            console.log("----------Event response-----------------", res.status)
+            if (res.status === 'confirmed') navigation.replace("Login");
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log('User cancelled Google sign-in');
@@ -209,16 +209,17 @@ const SignUp = () => {
                                 isChecked={form.isSelected}
 
                             />
-                            <Text style={styles.label}>I Agree with{' '}
-                                <Text style={{ ...styles.forgotText, marginLeft: 2, letterSpacing: 1, fontWeight: "600" }}>
-                                    Terms of Service
+                            <View>
+                                <Text style={styles.label}>I Agree with{' '}
+                                    <Text style={{ ...styles.forgotText, marginLeft: 2, letterSpacing: 1, fontWeight: "600" }}>
+                                        Terms of Service
+                                    </Text>
+                                    {' '}and{' '}
+                                    <Text style={{ ...styles.forgotText, marginLeft: 0, fontWeight: "600" }}>
+                                        Privacy Policy
+                                    </Text>
                                 </Text>
-                                {' '}and{' '}
-                                <Text style={{ ...styles.forgotText, marginLeft: 0, fontWeight: "600" }}>
-                                    Privacy Policy
-                                </Text>
-                            </Text>
-
+                            </View>
                         </View>
                         <View style={styles.btncontainer}>
                             <PrimaryButton label="Register" onPress={handleSignUp} />
@@ -312,7 +313,7 @@ const styles = StyleSheet.create({
     },
     label: {
         margin: 8,
-        marginTop: 20,
+        marginTop: 18,
         width: 340,
         fontSize: 14,
         fontFamily: "Inter-SemiBold",

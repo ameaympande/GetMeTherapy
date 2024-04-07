@@ -8,6 +8,7 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import { createEvent } from '../helper/createEvent';
 import auth from "@react-native-firebase/auth";
 import Toast from "react-native-toast-message"
+import firestore from '@react-native-firebase/firestore';
 
 const Login = () => {
     const navigation = useNavigation();
@@ -29,20 +30,22 @@ const Login = () => {
 
     const handleGoogleSignIn = async () => {
         try {
-            await GoogleSignin.hasPlayServices();
+            const { idToken, user } = await GoogleSignin.signIn();
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+            console.log('User signed up with Google:', user);
+
             const tokens = await GoogleSignin.getTokens();
-            const { user } = await GoogleSignin.signIn();
-            console.log("user", user);
             setUserAuth(user);
 
             const res = await createEvent(tokens.accessToken, user.email, user.name)
-            console.log("response", res);
-            if (res.status === 'confirmed') navigation.replace("PostLogin", { userAuth: userAuth });
+            console.log("----------Event response-----------------", res.status)
+            if (res.status === 'confirmed') navigation.replace("PostLogin", { userAuth: user });
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                console.log('User cancelled the login flow');
+                console.log('User cancelled Google sign-in');
             } else {
-                console.error('Google Sign-In error:', error);
+                console.error('Google Sign-Up error:', error);
             }
         }
     };
@@ -79,18 +82,21 @@ const Login = () => {
         }
 
         try {
-            const res = await auth().signInWithEmailAndPassword(form.email, form.password);
-            console.log("res", res);
+            const { user } = await auth().signInWithEmailAndPassword(form.email, form.password);
+            console.log("user", user);
             const tokens = await GoogleSignin.getTokens();
-            if (res.user.uid) {
+            if (user.uid) {
                 Toast.show({
                     type: 'success',
                     text1: 'Login successfully.'
                 });
-                navigation.replace("PostLogin", { userAuth: res.user });
+                const res = await createEvent(tokens.accessToken, user.email, user.name)
+                console.log("----------Event response-----------------", res.status)
+                if (res.status === 'confirmed') {
+                    navigation.replace("PostLogin", { userEmail: user.email, userName: user.name });
+                }
             }
-            const eventRes = await createEvent(tokens.accessToken, form.email)
-            console.log("eventRes", eventRes);
+
         } catch (error) {
             console.error('Error while login: ', error);
             if (error.code === 'auth/invalid-credential') {
@@ -153,9 +159,11 @@ const Login = () => {
                             isError={!!passwordError}
                         />
                         {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
-                        <Text onPress={() => navigation.navigate("ForgotPassword")} style={styles.forgotText}>
-                            Forgot password ?
-                        </Text>
+                        <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
+                            <Text style={styles.forgotText}>
+                                Forgot password ?
+                            </Text>
+                        </TouchableOpacity>
                         <View style={styles.btncontainer}>
                             <PrimaryButton label="Sign in" onPress={handleLogin} />
                         </View>

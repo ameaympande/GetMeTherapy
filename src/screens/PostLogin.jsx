@@ -7,12 +7,13 @@ import success from "../assets/images/success.png"
 import PrimaryButton from '../components/Button';
 
 const PostLogin = ({ route }) => {
-    console.log(route.params);
+    const { userAuth } = route.params;
+    console.log("userAuth", userAuth);
     const refRBSheet = useRef();
     const navigation = useNavigation();
 
     useEffect(() => {
-        refRBSheet.current.open();
+        if (userAuth.email && userAuth.name) refRBSheet.current.open();
     }, [])
 
     const handleLogOut = () => {
