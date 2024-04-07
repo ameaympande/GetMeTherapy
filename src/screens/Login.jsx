@@ -36,6 +36,7 @@ const Login = () => {
 
             const res = await createEvent(tokens.accessToken, user.email, user.name)
             console.log("response", res);
+            if (res.status === 'confirmed') navigation.replace('PostLogin')
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log('User cancelled the login flow');

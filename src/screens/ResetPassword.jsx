@@ -2,9 +2,9 @@ import { SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity, Sta
 import React, { useState } from 'react';
 import PrimaryButton from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
-import OTPInput from '../components/OTPinput';
 import IconE from 'react-native-vector-icons/Entypo';
 import CustomTextInput from '../components/TextInput';
+import auth from "@react-native-firebase/app"
 
 const ResetPassword = () => {
     const navigation = useNavigation();
@@ -29,7 +29,7 @@ const ResetPassword = () => {
             return;
         }
         if (newPassword.length < 8) {
-            setNewPasswordError("Must be at least 8 character.");
+            setNewPasswordError("Must be at least 8 characters.");
             return;
         }
         if (cpassword === "") {
@@ -41,8 +41,20 @@ const ResetPassword = () => {
             return;
         }
 
-        navigation.navigate("Home");
+        const forgotPassword = (email) => {
+            auth().sendPasswordResetEmail(email)
+                .then(() => {
+                    alert('Password reset email sent. Please check your email.');
+                })
+                .catch((error) => {
+                    console.error('Error sending password reset email:', error);
+                    alert('An error occurred while sending the password reset email. Please try again later.');
+                });
+        };
+
+        forgotPassword(form.email);
     };
+
 
     return (
         <>

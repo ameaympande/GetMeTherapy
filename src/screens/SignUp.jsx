@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { createEvent } from '../helper/createEvent';
 import auth from "@react-native-firebase/auth";
 import firestore from '@react-native-firebase/firestore';
+import Toast from 'react-native-toast-message';
 
 
 
@@ -24,6 +25,7 @@ const SignUp = () => {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [usernameError, setUsernameError] = useState("");
+    const [isCheckError, setisCheckError] = useState("");
 
     const handleEmailChange = (email) => {
         setForm({ ...form, email });
@@ -67,6 +69,10 @@ const SignUp = () => {
             hasError = true;
         }
 
+        if (!form.isSelected) {
+            hasError = true;
+        }
+
         if (hasError) {
             return;
         }
@@ -75,12 +81,32 @@ const SignUp = () => {
             const credential = await auth().createUserWithEmailAndPassword(form.email, form.password);
             const userData = {
                 email: form.email,
+                userName: form.userName,
                 password: form.password,
             };
             await firestore().collection('users').doc(credential.user.uid).set(userData);
             console.log('User signed up with email:', credential.user);
+            if (credential.user.uid) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Account created successfully.'
+                });
+                navigation.replace("Login")
+            }
         } catch (error) {
             console.error('Email Sign-Up error:', error);
+            if (error.code === 'auth/email-already-in-use') {
+                Toast.show({
+                    type: 'error',
+                    text1: 'The email address is already in use by another account.'
+                });
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: 'An error occurred. Please try again later.'
+                });
+            }
         }
     };
 
@@ -106,7 +132,6 @@ const SignUp = () => {
             setUserAuth(user);
 
             const res = await createEvent(tokens.accessToken, user.email, user.name)
-            console.log("response", res.status);
             if (res.status === 'confirmed') navigation.replace('Login')
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -178,6 +203,7 @@ const SignUp = () => {
                         {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
                         <View style={styles.checkboxContainer}>
                             <CheckBox
+                                error={form.isChecked}
                                 style={styles.checkbox}
                                 onClick={() => setForm({ ...form, isSelected: !form.isSelected })}
                                 isChecked={form.isSelected}

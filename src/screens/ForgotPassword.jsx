@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import CustomTextInput from '../components/TextInput';
 import PrimaryButton from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
+import { sendOTPByEmail } from '../helper/sendOTPByemail';
 
 const ForgotPassword = () => {
     const navigation = useNavigation();
@@ -17,7 +18,7 @@ const ForgotPassword = () => {
     };
 
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         let hasError = false;
 
         if (!validateEmail(form.email)) {
@@ -29,7 +30,10 @@ const ForgotPassword = () => {
             return;
         }
 
-        navigation.navigate("OTPchange", { email: form.email })
+        const mail = await sendOTPByEmail(form.email);
+        if (mail) {
+            navigation.navigate("OTPchange", { email: form.email })
+        }
 
     };
 

@@ -9,6 +9,7 @@ import SignUp from '../screens/SignUp';
 import ForgotPassword from '../screens/ForgotPassword';
 import OTPchange from '../screens/OTPchange';
 import ResetPassword from '../screens/ResetPassword';
+import PostLogin from '../screens/PostLogin';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,7 @@ const AppNavigator = () => {
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="OTPchange" component={OTPchange} />
           <Stack.Screen name="ResetPassword" component={ResetPassword} />
+          <Stack.Screen name="PostLogin" component={PostLogin} />
         </Stack.Navigator>
       </NavigationContainer>
     </>
