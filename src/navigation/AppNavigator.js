@@ -10,14 +10,42 @@ import ForgotPassword from '../screens/ForgotPassword';
 import OTPchange from '../screens/OTPchange';
 import ResetPassword from '../screens/ResetPassword';
 import PostLogin from '../screens/PostLogin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [initialRouteName, setInitialRouteName] = useState('Login');
+
+  useEffect(() => {
+    async function checkLaunchAndToken() {
+      try {
+        const appLaunched = await AsyncStorage.getItem('@appLaunched');
+        if (appLaunched === null) {
+          setInitialRouteName('Onboarding1');
+          await AsyncStorage.setItem('@appLaunched', 'true');
+        } else {
+          setInitialRouteName('Login');
+        }
+      } catch (error) {
+        console.error('Error checking app launch status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    checkLaunchAndToken();
+  }, []);
+
+  if (isLoading) {
+    return null;
+  }
   return (
     <>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Navigator
+          screenOptions={{headerShown: false}}
+          initialRouteName={initialRouteName}>
           <Stack.Screen name="Onboarding1" component={onBoarding1} />
           <Stack.Screen name="Onboarding2" component={OnBoarding2} />
           <Stack.Screen name="Onboarding3" component={OnBoarding3} />
