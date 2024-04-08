@@ -40,7 +40,9 @@ const Login = () => {
 
             const res = await createEvent(tokens.accessToken, user.email, user.name)
             console.log("----------Event response-----------------", res.status)
-            if (res.status === 'confirmed') navigation.replace("PostLogin", { userAuth: user });
+            if (res.status === 'confirmed') {
+                navigation.replace("PostLogin", { userEmail: user.email });
+            }
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log('User cancelled Google sign-in');
@@ -93,7 +95,7 @@ const Login = () => {
                 const res = await createEvent(tokens.accessToken, user.email, user.name)
                 console.log("----------Event response-----------------", res.status)
                 if (res.status === 'confirmed') {
-                    navigation.replace("PostLogin", { userEmail: user.email, userName: user.name });
+                    navigation.replace("PostLogin", { userEmail: user.email });
                 }
             }
 
@@ -159,11 +161,11 @@ const Login = () => {
                             isError={!!passwordError}
                         />
                         {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
-                        <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-                            <Text style={styles.forgotText}>
+                        <View style={{ alignItems: "flex-end", }} >
+                            <Text style={styles.forgotText} onPress={() => navigation.navigate("ForgotPassword")}>
                                 Forgot password ?
                             </Text>
-                        </TouchableOpacity>
+                        </View>
                         <View style={styles.btncontainer}>
                             <PrimaryButton label="Sign in" onPress={handleLogin} />
                         </View>
@@ -246,7 +248,6 @@ const styles = StyleSheet.create({
         marginLeft: 12,
     },
     forgotText: {
-        textAlign: "right",
         marginTop: 20,
         marginRight: 20,
         color: "#FE8C00",
