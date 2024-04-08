@@ -4,9 +4,17 @@ import CustomTextInput from '../components/TextInput';
 import PrimaryButton from '../components/Button';
 import CheckBox from 'react-native-check-box'
 import google from "../assets/images/google.png"
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
+import { createEvent } from '../helper/createEvent';
+import auth from "@react-native-firebase/auth";
+import firestore from '@react-native-firebase/firestore';
+import Toast from 'react-native-toast-message';
+
+
 
 const SignUp = () => {
+    const [userAuth, setUserAuth] = useState(null);
     const navigation = useNavigation();
     const [form, setForm] = useState({
         email: "",
@@ -16,6 +24,8 @@ const SignUp = () => {
     });
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [usernameError, setUsernameError] = useState("");
+    const [isCheckError, setisCheckError] = useState("");
 
     const handleEmailChange = (email) => {
         setForm({ ...form, email });
@@ -27,11 +37,26 @@ const SignUp = () => {
         setPasswordError("");
     };
 
-    const handleLogin = () => {
+    const handleUsernameChange = (username) => {
+        setForm({ ...form, userName: username });
+        setUsernameError("");
+    };
+
+    const handleSignUp = async () => {
         let hasError = false;
 
         if (!validateEmail(form.email)) {
             setEmailError("Please enter a valid email address.");
+            hasError = true;
+        }
+
+        if (form.userName.length < 6) {
+            setUsernameError("Username should be 6 characters long.");
+            hasError = true;
+        }
+
+        if (form.userName === "") {
+            setUsernameError("Please enter a username.");
             hasError = true;
         }
 
@@ -40,7 +65,11 @@ const SignUp = () => {
             hasError = true;
         }
         if (form.password.length <= 7) {
-            setPasswordError("Password should be 8 letter.");
+            setPasswordError("Password should be 8 characters long.");
+            hasError = true;
+        }
+
+        if (!form.isSelected) {
             hasError = true;
         }
 
@@ -48,7 +77,72 @@ const SignUp = () => {
             return;
         }
 
+        try {
+            const credential = await auth().createUserWithEmailAndPassword(form.email, form.password);
+            const userData = {
+                email: form.email,
+                userName: form.userName,
+                password: form.password,
+            };
+            await firestore().collection('users').doc(credential.user.uid).set(userData);
+            console.log('User signed up with email:', credential.user);
+            if (credential.user.uid) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Account created successfully.'
+                });
+                const tokens = await GoogleSignin.getTokens();
+
+                const res = await createEvent(tokens.accessToken, userData.email, userData.userName)
+                if (res.status === 'confirmed') navigation.replace('Login')
+            }
+        } catch (error) {
+            console.error('Email Sign-Up error:', error);
+            if (error.code === 'auth/email-already-in-use') {
+                Toast.show({
+                    type: 'error',
+                    text1: 'The email address is already in use by another account.'
+                });
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Error',
+                    text2: 'An error occurred. Please try again later.'
+                });
+            }
+        }
     };
+
+    const handleGoogleSignUp = async () => {
+        try {
+            const { idToken, user } = await GoogleSignin.signIn();
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+            const data = await auth().signInWithCredential(googleCredential);
+
+            const userData = {
+                email: user.email,
+                userName: form.userName,
+                photo: user.photo
+            };
+            await firestore().collection('users').doc(data.user.uid).set(userData);
+            console.log('User signed up with Google:', user);
+
+            const tokens = await GoogleSignin.getTokens();
+            setUserAuth(user);
+
+            const res = await createEvent(tokens.accessToken, user.email, user.name)
+            console.log("----------Event response-----------------", res.status)
+            if (res.status === 'confirmed') navigation.replace("Login");
+        } catch (error) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                console.log('User cancelled Google sign-in');
+            } else {
+                console.error('Google Sign-Up error:', error);
+            }
+        }
+    };
+
+
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -87,13 +181,13 @@ const SignUp = () => {
                         </Text>
                         <CustomTextInput
                             placeholder="Enter Username"
-                            value={form.email}
-                            onChangeText={handleEmailChange}
+                            value={form.userName}
+                            onChangeText={handleUsernameChange}
                             keyboardType="email-address"
                             autoCapitalize="none"
-                            isError={!!emailError}
+                            isError={!!usernameError}
                         />
-                        {emailError ? <Text style={styles.helperText}>{emailError}</Text> : null}
+                        {usernameError ? <Text style={styles.helperText}>{usernameError}</Text> : null}
 
                         <Text style={[styles.labelText, { marginTop: 10 }]}>
                             Password
@@ -109,24 +203,26 @@ const SignUp = () => {
                         {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
                         <View style={styles.checkboxContainer}>
                             <CheckBox
+                                error={form.isChecked}
                                 style={styles.checkbox}
                                 onClick={() => setForm({ ...form, isSelected: !form.isSelected })}
                                 isChecked={form.isSelected}
 
                             />
-                            <Text style={styles.label}>I Agree with{' '}
-                                <Text style={{ ...styles.forgotText, marginLeft: 2, letterSpacing: 1, fontWeight: "600" }}>
-                                    Terms of Service
+                            <View>
+                                <Text style={styles.label}>I Agree with{' '}
+                                    <Text style={{ ...styles.forgotText, marginLeft: 2, letterSpacing: 1, fontWeight: "600" }}>
+                                        Terms of Service
+                                    </Text>
+                                    {' '}and{' '}
+                                    <Text style={{ ...styles.forgotText, marginLeft: 0, fontWeight: "600" }}>
+                                        Privacy Policy
+                                    </Text>
                                 </Text>
-                                {' '}and{' '}
-                                <Text style={{ ...styles.forgotText, marginLeft: 0, fontWeight: "600" }}>
-                                    Privacy Policy
-                                </Text>
-                            </Text>
-
+                            </View>
                         </View>
                         <View style={styles.btncontainer}>
-                            <PrimaryButton label="Register" />
+                            <PrimaryButton label="Register" onPress={handleSignUp} />
                         </View>
                     </View>
                 </View>
@@ -138,7 +234,7 @@ const SignUp = () => {
                     <View style={styles.seprator} />
                 </View>
                 <View style={styles.circleButton}>
-                    <TouchableOpacity >
+                    <TouchableOpacity onPress={handleGoogleSignUp}>
                         <Image source={google} style={{ height: 24, width: 24 }} />
                     </TouchableOpacity>
                 </View>
@@ -217,7 +313,7 @@ const styles = StyleSheet.create({
     },
     label: {
         margin: 8,
-        marginTop: 20,
+        marginTop: 18,
         width: 340,
         fontSize: 14,
         fontFamily: "Inter-SemiBold",

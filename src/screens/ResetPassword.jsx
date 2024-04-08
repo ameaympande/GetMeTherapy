@@ -1,17 +1,23 @@
-import { SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
-import React, { useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, View, ScrollView, TouchableOpacity, StatusBar, Image } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import PrimaryButton from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
-import OTPInput from '../components/OTPinput';
 import IconE from 'react-native-vector-icons/Entypo';
 import CustomTextInput from '../components/TextInput';
+import auth from "@react-native-firebase/app"
+import success from "../assets/images/success.png"
+import { sendOTPByEmail } from '../helper/sendOTPByemail';
+import Toast from 'react-native-toast-message';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
-const ResetPassword = () => {
+const ResetPassword = ({ route }) => {
     const navigation = useNavigation();
+    const { email } = route?.params ? route.params : "example@gmail.com"
     const [newPassword, setNewPassword] = useState("");
     const [cpassword, setCPassword] = useState("");
     const [newPasswordError, setNewPasswordError] = useState("");
     const [cpasswordError, setCPasswordError] = useState("");
+    const refRBSheet = useRef();
 
     const handlePasswordChange = (value) => {
         setNewPassword(value);
@@ -23,13 +29,13 @@ const ResetPassword = () => {
         setCPasswordError("");
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (newPassword === "") {
             setNewPasswordError("Please enter a new password.");
             return;
         }
         if (newPassword.length < 8) {
-            setNewPasswordError("Must be at least 8 character.");
+            setNewPasswordError("Must be at least 8 characters.");
             return;
         }
         if (cpassword === "") {
@@ -41,13 +47,58 @@ const ResetPassword = () => {
             return;
         }
 
-        navigation.navigate("Home");
+
+        refRBSheet.current.open();
+
     };
+
 
     return (
         <>
             <StatusBar translucent backgroundColor="transparent" />
             <SafeAreaView style={styles.container}>
+                <RBSheet
+                    height={492}
+                    ref={refRBSheet}
+                    useNativeDriver={false}
+                    draggable={true}
+                    customStyles={{
+                        wrapper: {
+
+                        },
+                        draggableIcon: {
+                            backgroundColor: "rgba(0, 0, 0, 0.2)",
+                            width: 58.13,
+                            height: 4
+                        },
+                        container: {
+                            borderTopRightRadius: 50,
+                            borderTopLeftRadius: 50,
+                        },
+                    }}
+                    customModalProps={{
+                        animationType: 'slide',
+                        statusBarTranslucent: true,
+                    }}
+                    customAvoidingViewProps={{
+                        enabled: true,
+                    }}>
+
+                    <View style={styles.sheetContainer}>
+                        <Image source={success} style={styles.sucessImg} />
+                        <View style={styles.titlecontainer}>
+                            <Text style={styles.titleText}>
+                                Password Changed
+                            </Text>
+                            <Text style={styles.signinText}>
+                                Password changed successfully, you can login again with a new password
+                            </Text>
+                            <View style={styles.btncontainer}>
+                                <PrimaryButton label="Go to Login" onPress={() => navigation.navigate("Login")} />
+                            </View>
+                        </View>
+                    </View>
+                </RBSheet>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <IconE name="chevron-small-left" size={30} color="#101010" />
@@ -164,5 +215,35 @@ const styles = StyleSheet.create({
     },
     rightbtn: {
         backgroundColor: "white"
+    },
+    sheetContainer: {
+        alignItems: "center",
+        borderRadius: 50,
+
+    },
+    sucessImg: {
+        marginTop: 32,
+        width: 203,
+        height: 168
+    },
+    titlecontainer: {
+        marginTop: 32,
+        alignItems: "center",
+        width: 300,
+        gap: 10
+    },
+    titleText: {
+        color: "black",
+        fontFamily: "Inter-SemiBold",
+        fontSize: 32,
+        textAlignVertical: "bottom",
+        fontWeight: "600"
+    },
+    signinText: {
+        marginTop: 20,
+        textAlign: "center",
+        marginTop: 5,
+        fontSize: 14,
+        color: "#878787"
     },
 });

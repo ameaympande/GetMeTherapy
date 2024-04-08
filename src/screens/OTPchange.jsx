@@ -18,6 +18,7 @@ const OTPchange = ({ route }) => {
             setTimer((prevTimer) => {
                 if (prevTimer === 0) {
                     clearInterval(interval);
+                    setTimer(0)
                 }
                 return prevTimer - 1;
             });
@@ -38,7 +39,7 @@ const OTPchange = ({ route }) => {
     };
 
     const onComplete = () => {
-        navigation.navigate("ResetPassword");
+        navigation.navigate("ResetPassword", { email });
     }
 
     return (
@@ -86,7 +87,7 @@ const OTPchange = ({ route }) => {
                     </View>
                 </ScrollView>
                 <View style={styles.btncontainer}>
-                    <PrimaryButton label="Continue" />
+                    <PrimaryButton label="Continue" onPress={onComplete} />
                 </View>
             </SafeAreaView>
         </>

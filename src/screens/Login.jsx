@@ -6,7 +6,9 @@ import google from "../assets/images/google.png"
 import { useNavigation } from '@react-navigation/native';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { createEvent } from '../helper/createEvent';
-
+import auth from "@react-native-firebase/auth";
+import Toast from "react-native-toast-message"
+import firestore from '@react-native-firebase/firestore';
 
 const Login = () => {
     const navigation = useNavigation();
@@ -28,19 +30,22 @@ const Login = () => {
 
     const handleGoogleSignIn = async () => {
         try {
-            await GoogleSignin.hasPlayServices();
+            const { idToken, user } = await GoogleSignin.signIn();
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+            console.log('User signed up with Google:', user);
+
             const tokens = await GoogleSignin.getTokens();
-            const { user } = await GoogleSignin.signIn();
-            console.log(user);
             setUserAuth(user);
 
             const res = await createEvent(tokens.accessToken, user.email, user.name)
-            console.log("response", res);
+            console.log("----------Event response-----------------", res.status)
+            if (res.status === 'confirmed') navigation.replace("PostLogin", { userAuth: user });
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                console.log('User cancelled the login flow');
+                console.log('User cancelled Google sign-in');
             } else {
-                console.error('Google Sign-In error:', error);
+                console.error('Google Sign-Up error:', error);
             }
         }
     };
@@ -77,11 +82,36 @@ const Login = () => {
         }
 
         try {
-            const res = await auth().signInWithEmailAndPassword(form.email, form.password);
-            console.log("res", res);
-            await createEvent(form.email);
+            const { user } = await auth().signInWithEmailAndPassword(form.email, form.password);
+            console.log("user", user);
+            const tokens = await GoogleSignin.getTokens();
+            if (user.uid) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Login successfully.'
+                });
+                const res = await createEvent(tokens.accessToken, user.email, user.name)
+                console.log("----------Event response-----------------", res.status)
+                if (res.status === 'confirmed') {
+                    navigation.replace("PostLogin", { userEmail: user.email, userName: user.name });
+                }
+            }
+
         } catch (error) {
-            console.error('Error creating event: ', error);
+            console.error('Error while login: ', error);
+            if (error.code === 'auth/invalid-credential') {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Please enter valid email or password',
+                });
+
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: error,
+                    text2: 'An error occurred. Please try again later.'
+                });
+            }
         }
     };
 
@@ -129,9 +159,11 @@ const Login = () => {
                             isError={!!passwordError}
                         />
                         {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
-                        <Text onPress={() => navigation.navigate("ForgotPassword")} style={styles.forgotText}>
-                            Forgot password ?
-                        </Text>
+                        <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
+                            <Text style={styles.forgotText}>
+                                Forgot password ?
+                            </Text>
+                        </TouchableOpacity>
                         <View style={styles.btncontainer}>
                             <PrimaryButton label="Sign in" onPress={handleLogin} />
                         </View>

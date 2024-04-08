@@ -13,14 +13,14 @@ const CustomTextInput = ({ placeholder, value, onChangeText, keyboardType, autoC
         <View style={styles.inputContainer}>
             <TextInput
                 placeholder={placeholder}
-                secureTextEntry={!isPasswordVisible && placeholder === "Password"}
+                secureTextEntry={!isPasswordVisible && (placeholder === "New Password" || placeholder === "Confirm Password" || placeholder === "Password")}
                 style={[styles.input, isError && styles.errorInput]}
                 onChangeText={onChangeText}
                 value={value}
                 keyboardType={keyboardType}
                 autoCapitalize={autoCapitalize}
             />
-            {placeholder === "Password" || placeholder === "New Password" || placeholder === "Confirm Password" ? (
+            {(placeholder === "Password" || placeholder === "New Password" || placeholder === "Confirm Password") ? (
                 <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIconContainer}>
                     <Icon name={isPasswordVisible ? "eye" : "eye-with-line"} size={20} color="black" />
                 </TouchableOpacity>
