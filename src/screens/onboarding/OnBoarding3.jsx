@@ -1,6 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, StatusBar, TouchableOpacity, ActivityIndicator, Animated, Easing } from 'react-native';
-import { Svg, Circle } from 'react-native-svg';
+import { ImageBackground, SafeAreaView, StyleSheet, Text, View, StatusBar, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import React, { useState } from 'react';
 import bg from "../../assets/images/bg-onBoarding2.png";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
@@ -8,43 +7,19 @@ import { useNavigation } from '@react-navigation/native';
 const OnBoarding3 = () => {
     const navigation = useNavigation();
     const [loading, setLoading] = useState(false);
-    const spinValue = useRef(new Animated.Value(0)).current;
 
-    const startSpinner = () => {
+    const handleButtonClick = () => {
         setLoading(true);
-        Animated.loop(
-            Animated.timing(spinValue, {
-                toValue: 1,
-                duration: 2000,
-                easing: Easing.linear,
-                useNativeDriver: true,
-            })
-        ).start();
         setTimeout(() => {
             setLoading(false);
-            navigation.replace("Login");
+            navigation.navigate("Login")
         }, 2000);
     };
-
-    const spin = spinValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '360deg']
-    });
 
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar translucent backgroundColor="transparent" />
-            <View style={styles.background}>
-                <Svg height="100%" width="100%" viewBox="0 0 100 100" style={{ position: 'absolute' }}>
-                    <Circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        fill="none"
-                        stroke="#fff"
-                        strokeWidth="1"
-                    />
-                </Svg>
+            <ImageBackground source={bg} style={styles.background}>
                 <View style={styles.content}>
                     <View style={styles.card}>
                         <View style={styles.textcontainer}>
@@ -60,19 +35,21 @@ const OnBoarding3 = () => {
                                 <View style={[styles.hug, { backgroundColor: "white" }]} />
                             </View>
                             {loading &&
-                                <Animated.View style={[styles.loading, { transform: [{ rotate: spin }] }]}>
-                                    <ActivityIndicator color="#FE8C00" size={30} />
-                                </Animated.View>
+                                <ActivityIndicator color="white" size={120} style={styles.loading} />
                             }
-                            <View >
-                                <TouchableOpacity style={styles.circleButton} onPress={startSpinner}>
+                            <View style={styles.circleButton}>
+                                <TouchableOpacity onPress={handleButtonClick}>
+
+
                                     <Icon name="arrowright" size={24} color="#FE8C00" />
+
                                 </TouchableOpacity>
                             </View>
                         </View>
+
                     </View>
                 </View>
-            </View>
+            </ImageBackground>
         </SafeAreaView>
     )
 }
@@ -85,17 +62,17 @@ const styles = StyleSheet.create({
     },
     background: {
         flex: 1,
-        resizeMode: "cover",
+        resizeMode: "repeat",
         justifyContent: "center",
-        backgroundColor: '#FE8C00'
     },
     content: {
         flex: 1,
-        justifyContent: "center",
+        justifyContent: "flex-end",
         alignItems: "center",
+        paddingBottom: 30
     },
     card: {
-        backgroundColor: "transparent",
+        backgroundColor: "#FE8C00",
         height: 400,
         width: 311,
         paddingHorizontal: 20,
@@ -132,8 +109,8 @@ const styles = StyleSheet.create({
     },
     loading: {
         position: "absolute",
-        bottom: 70,
-        alignSelf: "center"
+        bottom: 2,
+        left: 75,
     },
     circleButton: {
         marginTop: 45,

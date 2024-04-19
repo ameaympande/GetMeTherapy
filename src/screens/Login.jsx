@@ -8,7 +8,6 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import { createEvent } from '../helper/createEvent';
 import auth from "@react-native-firebase/auth";
 import Toast from "react-native-toast-message"
-import firestore from '@react-native-firebase/firestore';
 
 const Login = () => {
     const navigation = useNavigation();
@@ -95,6 +94,10 @@ const Login = () => {
                 const res = await createEvent(tokens.accessToken, user.email, user.name)
                 console.log("----------Event response-----------------", res.status)
                 if (res.status === 'confirmed') {
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Event Created Successfully.'
+                    });
                     navigation.replace("PostLogin", { userEmail: user.email });
                 }
             }

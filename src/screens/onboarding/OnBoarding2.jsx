@@ -1,4 +1,4 @@
-import { ImageBackground, SafeAreaView, StyleSheet, Text, View, StatusBar, TouchableOpacity } from 'react-native'
+import { ImageBackground, SafeAreaView, StyleSheet, Text, View, StatusBar, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 import bg from "../../assets/images/bg-onBoarding2.png"
 import Icon from 'react-native-vector-icons/AntDesign';
