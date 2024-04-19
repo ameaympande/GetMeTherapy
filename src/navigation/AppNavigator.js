@@ -11,6 +11,7 @@ import OTPchange from '../screens/OTPchange';
 import ResetPassword from '../screens/ResetPassword';
 import PostLogin from '../screens/PostLogin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createStackNavigator();
 
@@ -34,6 +35,9 @@ const AppNavigator = () => {
       } finally {
         setIsLoading(false);
       }
+      setTimeout(() => {
+        SplashScreen.hide();
+      }, 1000);
     }
     checkFirstTime();
   }, []);
