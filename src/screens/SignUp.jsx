@@ -91,9 +91,8 @@ const SignUp = () => {
                     type: 'success',
                     text1: 'Account created successfully.'
                 });
-                const tokens = await GoogleSignin.getTokens();
 
-                const res = await createEvent(tokens.accessToken, userData.email, userData.userName)
+                const res = await createEvent(userData.email, userData.userName)
                 if (res.status === 'confirmed') navigation.replace('Login')
             }
         } catch (error) {
@@ -127,12 +126,11 @@ const SignUp = () => {
             await firestore().collection('users').doc(data.user.uid).set(userData);
             console.log('User signed up with Google:', user);
 
-            const tokens = await GoogleSignin.getTokens();
             setUserAuth(user);
 
-            const res = await createEvent(tokens.accessToken, user.email, user.name)
+            const res = await createEvent(user.email, user.name)
             console.log("----------Event response-----------------", res)
-            if (res.status === 'confirmed') navigation.replace('Login')
+            if (res.status === 'confirmed') navigation.replace("PostLogin", { userEmail: user.email });
         } catch (error) {
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
                 console.log('User cancelled Google sign-in');
@@ -204,12 +202,13 @@ const SignUp = () => {
                         <View style={styles.checkboxContainer}>
                             <CheckBox
                                 error={form.isChecked}
+                                checkedCheckBoxColor="#FE8C00"
                                 style={styles.checkbox}
                                 onClick={() => setForm({ ...form, isSelected: !form.isSelected })}
                                 isChecked={form.isSelected}
 
                             />
-                            <View>
+                            <View style={{ marginTop: 15, }}>
                                 <Text style={styles.label}>I Agree with{' '}
                                     <Text style={{ ...styles.forgotText, marginLeft: 2, letterSpacing: 1, fontWeight: "600" }}>
                                         Terms of Service
@@ -307,13 +306,12 @@ const styles = StyleSheet.create({
     },
     checkbox: {
         alignSelf: 'center',
-        width: 20,
-        height: 20,
+        width: 22,
+        height: 22,
 
     },
     label: {
         margin: 8,
-        marginTop: 18,
         width: 340,
         fontSize: 14,
         fontFamily: "Inter-SemiBold",

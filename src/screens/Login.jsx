@@ -29,15 +29,12 @@ const Login = () => {
 
     const handleGoogleSignIn = async () => {
         try {
-            const { idToken, user } = await GoogleSignin.signIn();
-            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+            const { user } = await GoogleSignin.signIn();
 
             console.log('User signed up with Google:', user);
-
-            const tokens = await GoogleSignin.getTokens();
             setUserAuth(user);
 
-            const res = await createEvent(tokens.accessToken, user.email, user.name)
+            const res = await createEvent(user.email, user.name)
             console.log("----------Event response-----------------", res.status)
             if (res.status === 'confirmed') {
                 navigation.replace("PostLogin", { userEmail: user.email });
@@ -83,15 +80,15 @@ const Login = () => {
         }
 
         try {
+
             const { user } = await auth().signInWithEmailAndPassword(form.email, form.password);
             console.log("user", user);
-            const tokens = await GoogleSignin.getTokens();
             if (user.uid) {
                 Toast.show({
                     type: 'success',
                     text1: 'Login successfully.'
                 });
-                const res = await createEvent(tokens.accessToken, user.email, user.name)
+                const res = await createEvent(user.email, user.name)
                 console.log("----------Event response-----------------", res.status)
                 if (res.status === 'confirmed') {
                     Toast.show({
