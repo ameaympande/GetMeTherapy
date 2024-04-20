@@ -47,8 +47,9 @@ const ResetPassword = ({ route }) => {
             return;
         }
 
-
-        refRBSheet.current.open();
+        const res = await sendOTPByEmail(email);
+        if (res)
+            refRBSheet.current.open();
 
     };
 

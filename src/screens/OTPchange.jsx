@@ -5,14 +5,18 @@ import { useNavigation } from '@react-navigation/native';
 import OTPInput from '../components/OTPinput';
 import IconE from 'react-native-vector-icons/Entypo';
 import IconM from 'react-native-vector-icons/MaterialCommunityIcons';
+import { sendOtpEmail } from '../helper/EmailHelper';
+import Toast from 'react-native-toast-message';
 
 const OTPchange = ({ route }) => {
     const navigation = useNavigation();
-    const { email, FEotp } = route.params;
+    const { email, FEotp: initialFEotp } = route.params;
     const numberOfInputs = 4;
     const [otp, setOTP] = useState(Array(numberOfInputs).fill(''));
     const [timer, setTimer] = useState(600);
+    const [FEotp, setFEotp] = useState(initialFEotp);
     const [otpError, setOtpError] = useState(false);
+
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -34,12 +38,30 @@ const OTPchange = ({ route }) => {
         return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
-    const resendOTP = () => {
-        if (timer === 0) setTimer(600);
+    const resendOTP = async () => {
+        try {
+            const newOTP = await sendOtpEmail(email);
+            console.log("New OTP sent successfully", newOTP);
+            setFEotp(newOTP);
+            setTimer(600);
+            setOTP(Array(numberOfInputs).fill(''));
+            setOtpError(false);
+            Toast.show({
+                type: 'success',
+                text1: 'New verification code sent.',
+            });
+        } catch (error) {
+            console.error("Error while sending OTP: ", error);
+            Toast.show({
+                type: 'error',
+                text1: 'Error sending verification code. Please try again.',
+            });
+        }
     };
 
-    const onComplete = () => {
-        const enteredOTP = otp.join('');
+
+    const onComplete = (otp) => {
+        const enteredOTP = otp
         if (enteredOTP === FEotp) {
             navigation.navigate('ResetPassword', { email });
         } else {

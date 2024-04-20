@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import CustomTextInput from '../components/TextInput';
 import PrimaryButton from '../components/Button';
 import { useNavigation } from '@react-navigation/native';
-// import { sendOTPByEmail } from '../helper/sendOTPByemail';
 import { sendOtpEmail } from '../helper/EmailHelper';
-import { checkEmailExists } from '../helper/FirebaseHelper';
+
 
 const ForgotPassword = () => {
     const navigation = useNavigation();
@@ -33,16 +32,15 @@ const ForgotPassword = () => {
         }
 
         try {
-            const isExist = await checkEmailExists(form.email);
-            console.log("isExist", isExist);
-            // sendOtpEmail(form.email).then((otp) => {
-            //     console.log("Email sent successfully", otp);
-            //     if (otp) {
-            //         navigation.navigate("OTPchange", { email: form.email, FEotp: otp })
-            //     }
-            // }).catch(error => {
-            //     console.error("Error while sending OTP: ", error);
-            // });
+
+            await sendOtpEmail(form.email).then((otp) => {
+                console.log("Email sent successfully", otp);
+                if (otp) {
+                    navigation.navigate("OTPchange", { email: form.email, FEotp: otp })
+                }
+            }).catch(error => {
+                console.error("Error while sending OTP: ", error);
+            });
         } catch (err) {
             console.error("Error before sending OTP: ", err);
         }
