@@ -25,6 +25,7 @@ const PostLogin = ({ route }) => {
             <ImageBackground source={bg} style={styles.background}>
                 <View style={styles.content}>
                     <RBSheet
+                        onClose={() => navigation.navigate("Login")}
                         height={492}
                         ref={refRBSheet}
                         useNativeDriver={false}

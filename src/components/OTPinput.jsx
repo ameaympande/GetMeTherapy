@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     input: {
+        color: "black",
         borderWidth: 1,
         borderColor: '#EAEAEA',
         borderRadius: 5,

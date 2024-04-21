@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, StatusBar } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, StatusBar, ScrollView, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import CustomTextInput from '../components/TextInput';
 import PrimaryButton from '../components/Button';
@@ -17,7 +17,6 @@ const Login = () => {
     });
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
-    const [userAuth, setUserAuth] = useState(null);
 
     useEffect(() => {
         GoogleSignin.configure({
@@ -30,9 +29,7 @@ const Login = () => {
     const handleGoogleSignIn = async () => {
         try {
             const { user } = await GoogleSignin.signIn();
-
             console.log('User signed up with Google:', user);
-            setUserAuth(user);
 
             const res = await createEvent(user.email, user.name)
             console.log("----------Event response-----------------", res.status)
@@ -126,71 +123,73 @@ const Login = () => {
         <>
             <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
             <SafeAreaView style={styles.container}>
-                <View style={styles.maincontainer}>
-                    <View style={styles.titlecontainer}>
-                        <Text style={styles.titleText}>
-                            Login to your account.
-                        </Text>
-                        <Text style={styles.signinText}>
-                            Please sign in to your account
-                        </Text>
-                    </View>
-                    <View style={styles.formcontainer}>
-                        <Text style={styles.labelText}>
-                            Email Address
-                        </Text>
-                        <CustomTextInput
-                            placeholder="Enter Email"
-                            value={form.email}
-                            onChangeText={handleEmailChange}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            isError={!!emailError}
-                        />
-                        {emailError ? <Text style={styles.helperText}>{emailError}</Text> : null}
-
-                        <Text style={[styles.labelText, { marginTop: 10 }]}>
-                            Password
-                        </Text>
-                        <CustomTextInput
-                            placeholder="Password"
-                            value={form.password}
-                            onChangeText={handlePasswordChange}
-                            keyboardType="default"
-                            autoCapitalize="none"
-                            isError={!!passwordError}
-                        />
-                        {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
-                        <View style={{ alignItems: "flex-end", }} >
-                            <Text style={styles.forgotText} onPress={() => navigation.navigate("ForgotPassword")}>
-                                Forgot password ?
+                <ScrollView keyboardShouldPersistTaps="handled">
+                    <View style={styles.maincontainer}>
+                        <View style={styles.titlecontainer}>
+                            <Text style={styles.titleText}>
+                                Login to your account.
+                            </Text>
+                            <Text style={styles.signinText}>
+                                Please sign in to your account
                             </Text>
                         </View>
-                        <View style={styles.btncontainer}>
-                            <PrimaryButton label="Sign in" onPress={handleLogin} />
+                        <View style={styles.formcontainer}>
+                            <Text style={styles.labelText}>
+                                Email Address
+                            </Text>
+                            <CustomTextInput
+                                placeholder="Enter Email"
+                                value={form.email}
+                                onChangeText={handleEmailChange}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                isError={!!emailError}
+                            />
+                            {emailError ? <Text style={styles.helperText}>{emailError}</Text> : null}
+
+                            <Text style={[styles.labelText, { marginTop: 10 }]}>
+                                Password
+                            </Text>
+                            <CustomTextInput
+                                placeholder="Password"
+                                value={form.password}
+                                onChangeText={handlePasswordChange}
+                                keyboardType="default"
+                                autoCapitalize="none"
+                                isError={!!passwordError}
+                            />
+                            {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
+                            <View style={{ alignItems: "flex-end", }} >
+                                <Text style={styles.forgotText} onPress={() => navigation.navigate("ForgotPassword")}>
+                                    Forgot password ?
+                                </Text>
+                            </View>
                         </View>
                     </View>
-                </View>
-                <View style={styles.speratorContainer}>
-                    <View style={styles.seprator} />
-                    <Text style={styles.sepratorText}>
-                        Or sign in with
-                    </Text>
-                    <View style={styles.seprator} />
-                </View>
-                <View style={styles.circleButton}>
-                    <TouchableOpacity onPress={handleGoogleSignIn}>
-                        <Image source={google} style={{ height: 24, width: 24 }} />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.registercontainer}>
-                    <Text style={{ ...styles.dontHaveText, marginRight: 0 }}>
-                        Don't have an account?
-                    </Text>
-                    <Text onPress={() => navigation.navigate("Signup")} style={{ ...styles.forgotText, marginRight: 0, fontWeight: "600" }}>
-                        Register
-                    </Text>
-                </View>
+                    <View style={styles.btncontainer}>
+                        <PrimaryButton label="Sign in" onPress={handleLogin} />
+                    </View>
+                    <View style={styles.speratorContainer}>
+                        <View style={styles.seprator} />
+                        <Text style={styles.sepratorText}>
+                            Or sign in with
+                        </Text>
+                        <View style={styles.seprator} />
+                    </View>
+                    <View style={styles.circleButton}>
+                        <TouchableOpacity onPress={handleGoogleSignIn}>
+                            <Image source={google} style={{ height: 24, width: 24 }} />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.registercontainer}>
+                        <Text style={{ ...styles.dontHaveText, marginRight: 0 }}>
+                            Don't have an account?
+                        </Text>
+                        <Text onPress={() => navigation.navigate("Signup")} style={{ ...styles.forgotText, marginRight: 0, fontWeight: "600" }}>
+                            Register
+                        </Text>
+                    </View>
+                </ScrollView>
             </SafeAreaView>
         </>
     );
@@ -303,9 +302,8 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     btncontainer: {
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "5%"
+        alignSelf: "center",
+        marginBottom: "5%",
     }
 
 });

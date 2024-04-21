@@ -25,7 +25,6 @@ const SignUp = () => {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [usernameError, setUsernameError] = useState("");
-    const [isCheckError, setisCheckError] = useState("");
 
     const handleEmailChange = (email) => {
         setForm({ ...form, email });
@@ -71,6 +70,10 @@ const SignUp = () => {
 
         if (!form.isSelected) {
             hasError = true;
+            Toast.show({
+                type: "error",
+                text1: "Please accept the privacy policy"
+            })
         }
 
         if (hasError) {
@@ -149,7 +152,7 @@ const SignUp = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView>
+            <ScrollView keyboardShouldPersistTaps="handled">
                 <View style={styles.maincontainer}>
                     <View style={styles.titlecontainer}>
                         <Text style={styles.titleText}>
@@ -199,7 +202,7 @@ const SignUp = () => {
                             isError={!!passwordError}
                         />
                         {passwordError ? <Text style={styles.helperText}>{passwordError}</Text> : null}
-                        <View style={styles.checkboxContainer}>
+                        <View style={styles.checkboxContainer} >
                             <CheckBox
                                 error={form.isChecked}
                                 checkedCheckBoxColor="#FE8C00"
@@ -208,7 +211,7 @@ const SignUp = () => {
                                 isChecked={form.isSelected}
 
                             />
-                            <View style={{ marginTop: 15, }}>
+                            <View style={{ marginTop: 10, }}>
                                 <Text style={styles.label}>I Agree with{' '}
                                     <Text style={{ ...styles.forgotText, marginLeft: 2, letterSpacing: 1, fontWeight: "600" }}>
                                         Terms of Service
@@ -220,10 +223,10 @@ const SignUp = () => {
                                 </Text>
                             </View>
                         </View>
-                        <View style={styles.btncontainer}>
-                            <PrimaryButton label="Register" onPress={handleSignUp} />
-                        </View>
                     </View>
+                </View>
+                <View style={styles.btncontainer}>
+                    <PrimaryButton label="Register" onPress={handleSignUp} />
                 </View>
                 <View style={styles.speratorContainer}>
                     <View style={styles.seprator} />
@@ -303,6 +306,8 @@ const styles = StyleSheet.create({
     },
     checkboxContainer: {
         flexDirection: 'row',
+        justifyContent: "center",
+        alignItems: "center"
     },
     checkbox: {
         alignSelf: 'center',
@@ -373,8 +378,7 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     btncontainer: {
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "3%"
+        alignSelf: "center",
+        marginBottom: "3%",
     }
 });

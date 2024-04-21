@@ -47,9 +47,8 @@ const ResetPassword = ({ route }) => {
             return;
         }
 
-        const res = await sendOTPByEmail(email);
-        if (res)
-            refRBSheet.current.open();
+
+        refRBSheet.current.open();
 
     };
 
@@ -107,7 +106,7 @@ const ResetPassword = ({ route }) => {
                     <Text style={styles.otpText}>Reset Password</Text>
                     <View style={styles.rightbtn} />
                 </View>
-                <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
                     <View style={styles.maincontainer}>
                         <View style={styles.titlecontainer}>
                             <Text style={styles.titleText}>Reset Password</Text>
@@ -176,21 +175,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 24,
         flex: 1
     },
-    titlecontainer: {
-        width: 300
-    },
-    titleText: {
-        color: "black",
-        fontFamily: "Inter-SemiBold",
-        fontSize: 32,
-        textAlignVertical: "bottom",
-        fontWeight: "600",
-    },
-    signinText: {
-        marginTop: 5,
-        fontSize: 14,
-        color: "#878787"
-    },
+
     formcontainer: {
         marginTop: 20,
     },
@@ -229,7 +214,6 @@ const styles = StyleSheet.create({
     },
     titlecontainer: {
         marginTop: 32,
-        alignItems: "center",
         width: 300,
         gap: 10
     },
@@ -242,7 +226,7 @@ const styles = StyleSheet.create({
     },
     signinText: {
         marginTop: 20,
-        textAlign: "center",
+        textAlign: "left",
         marginTop: 5,
         fontSize: 14,
         color: "#878787"
