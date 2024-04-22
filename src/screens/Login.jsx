@@ -185,7 +185,7 @@ const Login = () => {
                         <Text style={{ ...styles.dontHaveText, marginRight: 0 }}>
                             Don't have an account?
                         </Text>
-                        <Text onPress={() => navigation.navigate("Signup")} style={{ ...styles.forgotText, marginRight: 0, fontWeight: "600" }}>
+                        <Text onPress={() => navigation.navigate("Signup")} style={{ ...styles.forgotText, marginLeft: 3, fontWeight: "600" }}>
                             Register
                         </Text>
                     </View>
